@@ -3,44 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meal Planner</title>
+    <title>Ambrosia - Precision Nutrition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Meal Planner</h1>
+        <h1>Ambrosia</h1>
+        <p>Nutrition, Engineered</p>
     </header>
     <main>
         <section id="input-section">
             <h2>Enter Your Requirements</h2>
             <form id="meal-form">
-                <div>
+                <div class="form-group">
                     <label for="calories">Calories:</label>
-                    <input type="number" id="calories" name="calories">
+                    <input type="number" id="calories" name="calories" placeholder="Optional">
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="protein">Protein (g):</label>
-                    <input type="number" id="protein" name="protein">
+                    <input type="number" id="protein" name="protein" placeholder="Optional">
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="carbs">Carbs (g):</label>
-                    <input type="number" id="carbs" name="carbs">
+                    <input type="number" id="carbs" name="carbs" placeholder="Optional">
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="fat">Fat (g):</label>
-                    <input type="number" id="fat" name="fat">
+                    <input type="number" id="fat" name="fat" placeholder="Optional">
                 </div>
-                <div>
+                <div class="form-group">
                     <label>Dietary Restrictions:</label>
-                    <div>
+                    <div class="checkbox-group">
                         <input type="checkbox" id="vegan" name="vegan">
                         <label for="vegan">Vegan</label>
                     </div>
-                    <div>
+                    <div class="checkbox-group">
                         <input type="checkbox" id="vegetarian" name="vegetarian">
                         <label for="vegetarian">Vegetarian</label>
                     </div>
-                    <div>
+                    <div class="checkbox-group">
                         <input type="checkbox" id="gluten-free" name="gluten-free">
                         <label for="gluten-free">Gluten-Free</label>
                     </div>
@@ -54,7 +56,7 @@
         </section>
     </main>
     <footer>
-        <p>&copy; 2024 Meal Planner. All rights reserved.</p>
+        <p>&copy; 2024 Ambrosia. All rights reserved.</p>
     </footer>
     <script src="script.js"></script>
 </body>
