@@ -2,11 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('meal-form');
     const foodIdeas = document.getElementById('food-ideas');
     const regenerateButton = document.getElementById('regenerate');
-    let allFoods = [];
+    let currentPage = 1;
     let currentRequirements = {};
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
+        currentPage = 1;
         currentRequirements = {
             calories: document.getElementById('calories').value ? parseInt(document.getElementById('calories').value) : null,
             protein: document.getElementById('protein').value ? parseInt(document.getElementById('protein').value) : null,
@@ -20,11 +21,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     regenerateButton.addEventListener('click', () => {
-        generateFoodIdeas(true);
+        currentPage++;
+        generateFoodIdeas();
     });
 
-    async function fetchFoodData(page = 1) {
-        const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=&json=1&page=${page}&page_size=100`;
+    async function fetchFoodData() {
+        let url = `https://world.openfoodfacts.org/cgi/search.pl?action=process&json=1&page=${currentPage}&page_size=50`;
+        
+        if (currentRequirements.vegan) url += '&tagtype_0=categories&tag_contains_0=contains&tag_0=vegan';
+        if (currentRequirements.vegetarian) url += '&tagtype_0=categories&tag_contains_0=contains&tag_0=vegetarian';
+        if (currentRequirements.glutenFree) url += '&tagtype_1=allergens&tag_contains_1=does_not_contain&tag_1=gluten';
+
+        // Add nutrient filters
+        if (currentRequirements.calories) url += `&nutriment_0=energy-kcal_100g&nutriment_compare_0=lte&nutriment_value_0=${currentRequirements.calories}`;
+        if (currentRequirements.protein) url += `&nutriment_1=proteins_100g&nutriment_compare_1=gte&nutriment_value_1=${currentRequirements.protein}`;
+        if (currentRequirements.carbs) url += `&nutriment_2=carbohydrates_100g&nutriment_compare_2=lte&nutriment_value_2=${currentRequirements.carbs}`;
+        if (currentRequirements.fat) url += `&nutriment_3=fat_100g&nutriment_compare_3=lte&nutriment_value_3=${currentRequirements.fat}`;
+
         try {
             console.log(`Fetching data from: ${url}`);
             const response = await fetch(url);
@@ -41,36 +54,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function generateFoodIdeas(regenerate = false) {
+    async function generateFoodIdeas() {
         foodIdeas.innerHTML = '<p>Loading food ideas...</p>';
         regenerateButton.style.display = 'none';
 
         try {
-            if (allFoods.length === 0 || regenerate) {
-                allFoods = [];
-                for (let i = 1; i <= 5; i++) {  // Fetch 5 pages of data
-                    const foods = await fetchFoodData(i);
-                    allFoods = allFoods.concat(foods);
-                }
-                console.log(`Total foods fetched: ${allFoods.length}`);
-            }
-
-            const ideas = allFoods.filter(food => {
-                const nutrients = food.nutriments;
-                return (
-                    (currentRequirements.calories === null || (nutrients['energy-kcal_100g'] && nutrients['energy-kcal_100g'] <= currentRequirements.calories)) &&
-                    (currentRequirements.protein === null || (nutrients.proteins_100g && nutrients.proteins_100g >= currentRequirements.protein)) &&
-                    (currentRequirements.carbs === null || (nutrients.carbohydrates_100g && nutrients.carbohydrates_100g <= currentRequirements.carbs)) &&
-                    (currentRequirements.fat === null || (nutrients.fat_100g && nutrients.fat_100g <= currentRequirements.fat)) &&
-                    (!currentRequirements.vegan || food.ingredients_analysis_tags?.includes('en:vegan')) &&
-                    (!currentRequirements.vegetarian || food.ingredients_analysis_tags?.includes('en:vegetarian')) &&
-                    (!currentRequirements.glutenFree || !food.allergens_tags?.includes('en:gluten'))
-                );
-            });
-
-            console.log(`Filtered ideas: ${ideas.length}`);
-            displayFoodIdeas(ideas.slice(0, 10));  // Display only 10 ideas
-            regenerateButton.style.display = ideas.length > 10 ? 'block' : 'none';
+            const foods = await fetchFoodData();
+            console.log(`Filtered foods: ${foods.length}`);
+            displayFoodIdeas(foods.slice(0, 10));  // Display only 10 ideas
+            regenerateButton.style.display = foods.length > 0 ? 'block' : 'none';
         } catch (error) {
             console.error('Error generating food ideas:', error);
             foodIdeas.innerHTML = `<p>Error generating food ideas: ${error.message}. Please try again later.</p>`;
