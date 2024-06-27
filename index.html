@@ -3,61 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Food Ideas - Precision Nutrition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono&display=swap" rel="stylesheet">
+    <title>Ambrosia - Precision Nutrition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Food ideas</h1>
-        <p>Nutrition, Engineered</p>
+        <h1>Ambrosia</h1>
+        <p>Precision Nutrition for Peak Performance</p>
     </header>
     <main>
         <section id="input-section">
-            <h2>Enter Your Requirements</h2>
             <form id="meal-form">
-                <div class="form-group">
-                    <label for="calories">Calories:</label>
-                    <input type="number" id="calories" name="calories" placeholder="Optional">
-                </div>
-                <div class="form-group">
-                    <label for="protein">Protein (g):</label>
-                    <input type="number" id="protein" name="protein" placeholder="Optional">
-                </div>
-                <div class="form-group">
-                    <label for="carbs">Carbs (g):</label>
-                    <input type="number" id="carbs" name="carbs" placeholder="Optional">
-                </div>
-                <div class="form-group">
-                    <label for="fat">Fat (g):</label>
-                    <input type="number" id="fat" name="fat" placeholder="Optional">
-                </div>
-                <div class="form-group">
-                    <label>Dietary Restrictions:</label>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="vegan" name="vegan">
-                        <label for="vegan">Vegan</label>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="calories">Max Calories:</label>
+                        <input type="number" id="calories" name="calories" placeholder="e.g., 500">
                     </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="vegetarian" name="vegetarian">
-                        <label for="vegetarian">Vegetarian</label>
+                    <div class="form-group">
+                        <label for="protein">Min Protein (g):</label>
+                        <input type="number" id="protein" name="protein" placeholder="e.g., 30">
                     </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="gluten-free" name="gluten-free">
-                        <label for="gluten-free">Gluten-Free</label>
+                    <div class="form-group">
+                        <label for="carbs">Max Carbs (g):</label>
+                        <input type="number" id="carbs" name="carbs" placeholder="e.g., 50">
+                    </div>
+                    <div class="form-group">
+                        <label for="fat">Max Fat (g):</label>
+                        <input type="number" id="fat" name="fat" placeholder="e.g., 20">
                     </div>
                 </div>
-                <button type="submit">Generate Food Ideas</button>
+                <div class="form-row">
+                    <div class="checkbox-group">
+                        <label>Dietary Restrictions:</label>
+                        <div class="checkbox-row">
+                            <input type="checkbox" id="vegan" name="vegan">
+                            <label for="vegan">Vegan</label>
+                            <input type="checkbox" id="vegetarian" name="vegetarian">
+                            <label for="vegetarian">Vegetarian</label>
+                            <input type="checkbox" id="gluten-free" name="gluten-free">
+                            <label for="gluten-free">Gluten-Free</label>
+                        </div>
+                    </div>
+                    <button type="submit">Generate Food Ideas</button>
+                </div>
             </form>
         </section>
         <section id="results-section">
             <h2>Food Ideas</h2>
             <div id="food-ideas"></div>
-            <button id="regenerate" style="display: none;">Regenerate Ideas</button>
+            <button id="regenerate" style="display: none;">Load More Ideas</button>
         </section>
     </main>
     <footer>
-        <p>&copy; 2024  All rights reserved.</p>
+        <p>&copy; 2024 Ambrosia. All rights reserved.</p>
     </footer>
     <script src="script.js"></script>
 </body>
