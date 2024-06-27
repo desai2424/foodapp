@@ -1,25 +1,13 @@
-// Expanded database of meals
-const meals = [
-    { name: 'Grilled Chicken Salad', calories: 350, protein: 30, carbs: 10, fat: 20, vegan: false, vegetarian: false, glutenFree: true },
-    { name: 'Vegan Buddha Bowl', calories: 400, protein: 15, carbs: 60, fat: 15, vegan: true, vegetarian: true, glutenFree: true },
-    { name: 'Salmon with Roasted Vegetables', calories: 450, protein: 35, carbs: 20, fat: 25, vegan: false, vegetarian: false, glutenFree: true },
-    { name: 'Vegetarian Pasta', calories: 500, protein: 20, carbs: 70, fat: 15, vegan: false, vegetarian: true, glutenFree: false },
-    { name: 'Tofu Stir-Fry', calories: 380, protein: 25, carbs: 40, fat: 18, vegan: true, vegetarian: true, glutenFree: true },
-    { name: 'Greek Yogurt with Berries and Granola', calories: 300, protein: 20, carbs: 40, fat: 10, vegan: false, vegetarian: true, glutenFree: true },
-    { name: 'Lentil Soup', calories: 250, protein: 15, carbs: 35, fat: 8, vegan: true, vegetarian: true, glutenFree: true },
-    { name: 'Grilled Steak with Sweet Potato', calories: 550, protein: 40, carbs: 45, fat: 25, vegan: false, vegetarian: false, glutenFree: true },
-    { name: 'Quinoa and Black Bean Burrito Bowl', calories: 420, protein: 18, carbs: 65, fat: 12, vegan: true, vegetarian: true, glutenFree: true },
-    { name: 'Tuna Salad Sandwich', calories: 400, protein: 25, carbs: 35, fat: 20, vegan: false, vegetarian: false, glutenFree: false },
-    // Add more meals here...
-];
-
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('meal-form');
-    const mealSuggestions = document.getElementById('meal-suggestions');
+    const foodIdeas = document.getElementById('food-ideas');
+    const regenerateButton = document.getElementById('regenerate');
+    let allFoods = [];
+    let currentRequirements = {};
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const requirements = {
+        currentRequirements = {
             calories: document.getElementById('calories').value ? parseInt(document.getElementById('calories').value) : null,
             protein: document.getElementById('protein').value ? parseInt(document.getElementById('protein').value) : null,
             carbs: document.getElementById('carbs').value ? parseInt(document.getElementById('carbs').value) : null,
@@ -28,41 +16,75 @@ document.addEventListener('DOMContentLoaded', () => {
             vegetarian: document.getElementById('vegetarian').checked,
             glutenFree: document.getElementById('gluten-free').checked
         };
-
-        const suggestions = generateMealSuggestions(requirements);
-        displayMealSuggestions(suggestions);
+        generateFoodIdeas();
     });
 
-    function generateMealSuggestions(requirements) {
-        return meals.filter(meal => {
-            return (
-                (requirements.calories === null || meal.calories <= requirements.calories) &&
-                (requirements.protein === null || meal.protein >= requirements.protein) &&
-                (requirements.carbs === null || meal.carbs <= requirements.carbs) &&
-                (requirements.fat === null || meal.fat <= requirements.fat) &&
-                (!requirements.vegan || meal.vegan) &&
-                (!requirements.vegetarian || meal.vegetarian) &&
-                (!requirements.glutenFree || meal.glutenFree)
-            );
-        });
+    regenerateButton.addEventListener('click', () => {
+        generateFoodIdeas(true);
+    });
+
+    async function fetchFoodData(page = 1) {
+        const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=&json=1&page=${page}&page_size=100`;
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            return data.products;
+        } catch (error) {
+            console.error('Error fetching food data:', error);
+            return [];
+        }
     }
 
-    function displayMealSuggestions(suggestions) {
-        mealSuggestions.innerHTML = '';
-        if (suggestions.length === 0) {
-            mealSuggestions.innerHTML = '<p>No meals found matching your criteria. Try adjusting your requirements.</p>';
+    async function generateFoodIdeas(regenerate = false) {
+        foodIdeas.innerHTML = '<p>Loading food ideas...</p>';
+        regenerateButton.style.display = 'none';
+
+        if (allFoods.length === 0 || regenerate) {
+            allFoods = [];
+            for (let i = 1; i <= 5; i++) {  // Fetch 5 pages of data
+                const foods = await fetchFoodData(i);
+                allFoods = allFoods.concat(foods);
+            }
+        }
+
+        const ideas = allFoods.filter(food => {
+            const nutrients = food.nutriments;
+            return (
+                (currentRequirements.calories === null || (nutrients['energy-kcal_100g'] && nutrients['energy-kcal_100g'] <= currentRequirements.calories)) &&
+                (currentRequirements.protein === null || (nutrients.proteins_100g && nutrients.proteins_100g >= currentRequirements.protein)) &&
+                (currentRequirements.carbs === null || (nutrients.carbohydrates_100g && nutrients.carbohydrates_100g <= currentRequirements.carbs)) &&
+                (currentRequirements.fat === null || (nutrients.fat_100g && nutrients.fat_100g <= currentRequirements.fat)) &&
+                (!currentRequirements.vegan || food.ingredients_analysis_tags?.includes('en:vegan')) &&
+                (!currentRequirements.vegetarian || food.ingredients_analysis_tags?.includes('en:vegetarian')) &&
+                (!currentRequirements.glutenFree || !food.allergens_tags?.includes('en:gluten'))
+            );
+        });
+
+        displayFoodIdeas(ideas.slice(0, 10));  // Display only 10 ideas
+        regenerateButton.style.display = ideas.length > 10 ? 'block' : 'none';
+    }
+
+    function displayFoodIdeas(ideas) {
+        foodIdeas.innerHTML = '';
+        if (ideas.length === 0) {
+            foodIdeas.innerHTML = '<p>No food ideas found matching your criteria. Try adjusting your requirements.</p>';
         } else {
             const ul = document.createElement('ul');
-            suggestions.forEach(meal => {
+            ideas.forEach(food => {
                 const li = document.createElement('li');
                 li.innerHTML = `
-                    <h3>${meal.name}</h3>
-                    <p>Calories: ${meal.calories}, Protein: ${meal.protein}g, Carbs: ${meal.carbs}g, Fat: ${meal.fat}g</p>
-                    <p>Dietary: ${meal.vegan ? 'Vegan, ' : ''}${meal.vegetarian ? 'Vegetarian, ' : ''}${meal.glutenFree ? 'Gluten-Free' : ''}</p>
+                    <h3>${food.product_name}</h3>
+                    <p>Calories: ${food.nutriments['energy-kcal_100g'] || 'N/A'} kcal/100g</p>
+                    <p>Protein: ${food.nutriments.proteins_100g || 'N/A'} g/100g</p>
+                    <p>Carbs: ${food.nutriments.carbohydrates_100g || 'N/A'} g/100g</p>
+                    <p>Fat: ${food.nutriments.fat_100g || 'N/A'} g/100g</p>
+                    <p>Dietary: ${food.ingredients_analysis_tags?.includes('en:vegan') ? 'Vegan, ' : ''}
+                                ${food.ingredients_analysis_tags?.includes('en:vegetarian') ? 'Vegetarian, ' : ''}
+                                ${!food.allergens_tags?.includes('en:gluten') ? 'Gluten-Free' : ''}</p>
                 `;
                 ul.appendChild(li);
             });
-            mealSuggestions.appendChild(ul);
+            foodIdeas.appendChild(ul);
         }
     }
 });
