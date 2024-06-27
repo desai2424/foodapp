@@ -1,6 +1,5 @@
 const APP_ID = '7f5797c0';
 const APP_KEY = '9b3e7c56fcea43444d826c079ee76d7c';
-const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('meal-form');
@@ -52,18 +51,20 @@ document.addEventListener('DOMContentLoaded', () => {
             url += `&nutrients[FAT]=0-${currentRequirements.fat}`;
         }
 
-        const proxyUrl = CORS_PROXY + url;
-        console.log('Fetching data with URL:', proxyUrl);
+        console.log('Fetching data with URL:', url);
 
         try {
-            const response = await fetch(proxyUrl, {
+            const response = await fetch(url, {
+                method: 'GET',
                 headers: {
-                    'Origin': 'http://localhost'  // or your actual origin
+                    'Accept': 'application/json'
                 }
             });
+            
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
+            
             const data = await response.json();
             console.log('API response:', data);
             
