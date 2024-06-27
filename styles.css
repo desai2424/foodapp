@@ -1,16 +1,28 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     line-height: 1.6;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #0A192F;
+    color: #E6F1FF;
 }
 
 header {
-    background-color: #333;
-    color: #fff;
+    background-color: #112240;
     text-align: center;
-    padding: 1rem;
+    padding: 2rem;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    color: #64FFDA;
+}
+
+header p {
+    margin: 0;
+    font-size: 1rem;
+    color: #8892B0;
 }
 
 main {
@@ -19,41 +31,66 @@ main {
     margin: 0 auto;
 }
 
-h1, h2 {
+h2 {
+    color: #64FFDA;
     margin-bottom: 1rem;
 }
 
 form {
-    background-color: #fff;
-    padding: 1rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #112240;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-form div {
-    margin-bottom: 1rem;
+.form-group {
+    margin-bottom: 1.5rem;
 }
 
 label {
     display: block;
     margin-bottom: 0.5rem;
+    color: #8892B0;
 }
 
 input[type="number"], input[type="checkbox"] {
+    background-color: #0A192F;
+    border: 1px solid #233554;
+    color: #E6F1FF;
+    padding: 0.5rem;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input[type="number"]::placeholder {
+    color: #8892B0;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.checkbox-group input[type="checkbox"] {
     margin-right: 0.5rem;
+    width: auto;
 }
 
 button {
-    background-color: #333;
-    color: #fff;
-    padding: 0.5rem 1rem;
+    background-color: #64FFDA;
+    color: #0A192F;
+    padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: 3px;
+    border-radius: 4px;
     cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #555;
+    background-color: #4CD2B6;
 }
 
 #results-section {
@@ -61,15 +98,26 @@ button:hover {
 }
 
 #meal-suggestions {
-    background-color: #fff;
-    padding: 1rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #112240;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 footer {
     text-align: center;
     padding: 1rem;
-    background-color: #333;
-    color: #fff;
+    background-color: #112240;
+    color: #8892B0;
+    font-size: 0.875rem;
+}
+
+@media (max-width: 600px) {
+    main {
+        padding: 1rem;
+    }
+
+    form {
+        padding: 1rem;
+    }
 }
