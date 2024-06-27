@@ -38,19 +38,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentRequirements.diet.length > 0) {
             url += `&health=${currentRequirements.diet.join('&health=')}`;
         }
-        if (currentRequirements.calories) url += `&calories=0-${currentRequirements.calories}`;
-        if (currentRequirements.protein) url += `&nutrients[PROCNT]=${currentRequirements.protein}%2B`;
-        if (currentRequirements.carbs) url += `&nutrients[CHOCDF]=0-${currentRequirements.carbs}`;
-        if (currentRequirements.fat) url += `&nutrients[FAT]=0-${currentRequirements.fat}`;
+        if (currentRequirements.calories) {
+            url += `&calories=0-${currentRequirements.calories}`;
+        }
+        if (currentRequirements.protein) {
+            url += `&nutrients[PROCNT]=${currentRequirements.protein}-1000`;
+        }
+        if (currentRequirements.carbs) {
+            url += `&nutrients[CHOCDF]=0-${currentRequirements.carbs}`;
+        }
+        if (currentRequirements.fat) {
+            url += `&nutrients[FAT]=0-${currentRequirements.fat}`;
+        }
+
+        console.log('Fetching data with URL:', url);
 
         try {
-            console.log(`Fetching data from: ${url}`);
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            console.log(`Received ${data.hits.length} recipes from API`);
+            console.log('API response:', data);
+            
+            if (data.hits.length === 0) {
+                console.log('No results found. Current requirements:', currentRequirements);
+            }
+            
             return data.hits;
         } catch (error) {
             console.error('Error fetching food data:', error);
